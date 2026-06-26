@@ -20,7 +20,7 @@ import java.util.List;
 
 public class EChestMod implements ClientModInitializer {
 
-    private static final int INTERVAL = 6000;
+    private static final int INTERVAL = 2400;
     private static final int MAX_PER_SLOT = 32;
 
     private static final List<Item> VALUABLES = List.of(
@@ -155,4 +155,4 @@ public class EChestMod implements ClientModInitializer {
         }
         return false;
     }
-    }
+                        }
