@@ -101,6 +101,10 @@ public class EChestMod implements ClientModInitializer {
                     if (client.player != null) {
                         client.player.sendMessage(Text.literal("§aDepozit qilindi!"), false);
                     }
+                    // Echestni yop
+                    if (client.currentScreen != null) {
+                        client.currentScreen.close();
+                    }
                 });
             }).start();
         });
@@ -109,42 +113,42 @@ public class EChestMod implements ClientModInitializer {
     private void depositAll(MinecraftClient client, GenericContainerScreenHandler handler) {
         if (client.player == null) return;
 
+        // Hotbar (0-8) + Inventory (9-35) — hammasi 0-35
         for (int invSlot = 0; invSlot < 36; invSlot++) {
             ItemStack stack = client.player.getInventory().getStack(invSlot);
             if (stack.isEmpty() || !VALUABLES.contains(stack.getItem())) continue;
 
             Item item = stack.getItem();
 
+            // Echestda joy bormi?
+            boolean hasSpace = false;
             for (int es = 0; es < 27; es++) {
                 ItemStack esStack = handler.slots.get(es).getStack();
-
-                boolean canPlace = esStack.isEmpty() ||
-                    (esStack.getItem() == item && esStack.getCount() < MAX_PER_SLOT);
-                if (!canPlace) continue;
-
-                int handlerPlayerSlot = 27 + invSlot;
-
-                client.interactionManager.clickSlot(
-                    handler.syncId, handlerPlayerSlot, 0,
-                    SlotActionType.PICKUP, client.player);
-
-                ItemStack cursor = handler.getCursorStack();
-                int curEchestCount = esStack.isEmpty() ? 0 : esStack.getCount();
-                int toPlace = Math.min(cursor.getCount(), MAX_PER_SLOT - curEchestCount);
-
-                for (int t = 0; t < toPlace; t++) {
-                    client.interactionManager.clickSlot(
-                        handler.syncId, es, 1,
-                        SlotActionType.PICKUP, client.player);
-                }
-
-                if (!handler.getCursorStack().isEmpty()) {
-                    client.interactionManager.clickSlot(
-                        handler.syncId, handlerPlayerSlot, 0,
-                        SlotActionType.PICKUP, client.player);
-                }
-                break;
+                if (esStack.isEmpty()) { hasSpace = true; break; }
+                if (esStack.getItem() == item && esStack.getCount() < MAX_PER_SLOT) { hasSpace = true; break; }
             }
+            if (!hasSpace) continue;
+
+            // Handler slot index:
+            // 0-26 = echest
+            // 27-53 = player inventory (9-35)
+            // 54-62 = hotbar (0-8)
+            int handlerSlot;
+            if (invSlot < 9) {
+                // Hotbar
+                handlerSlot = 54 + invSlot;
+            } else {
+                // Inventory
+                handlerSlot = 27 + (invSlot - 9);
+            }
+
+            client.interactionManager.clickSlot(
+                handler.syncId,
+                handlerSlot,
+                0,
+                SlotActionType.QUICK_MOVE,
+                client.player
+            );
         }
     }
 
@@ -155,4 +159,4 @@ public class EChestMod implements ClientModInitializer {
         }
         return false;
     }
-                        }
+                                         }
