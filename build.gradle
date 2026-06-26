@@ -1,13 +1,22 @@
-plugins {
-    id 'fabric-loom' version '1.6-SNAPSHOT'
-    id 'maven-publish'
+buildscript {
+    repositories {
+        maven { url = "https://maven.fabricmc.net/" }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.fabricmc:fabric-loom:1.6-SNAPSHOT'
+    }
 }
+
+apply plugin: 'fabric-loom'
+apply plugin: 'maven-publish'
 
 version = '1.0.0'
 group = 'com.echestmod'
 archivesBaseName = 'echest-fabric'
 
 repositories {
+    maven { url = "https://maven.fabricmc.net/" }
     mavenCentral()
 }
 
