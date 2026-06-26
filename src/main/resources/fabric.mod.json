@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "echestmod",
+  "version": "1.0.0",
+  "name": "EChest Auto Deposit",
+  "description": "Auto deposits valuable blocks into team ender chest",
+  "authors": ["AutoMod"],
+  "contact": {},
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.echestmod.mod.EChestMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "fabric-api": "*",
+    "minecraft": "~1.21.1"
+  }
+}
